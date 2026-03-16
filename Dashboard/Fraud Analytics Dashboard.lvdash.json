@@ -1,0 +1,381 @@
+{
+  "datasets": [
+    {
+      "name": "910e11c0",
+      "displayName": "fraud_location",
+      "queryLines": [
+        "SELECT location, fraud_count, fraud_rate_pct, total_transactions\r\n",
+        "FROM fraud_analytics.gold.fraud_by_location\r\n",
+        "ORDER BY fraud_count DESC\r\n",
+        "LIMIT 10"
+      ]
+    },
+    {
+      "name": "11e04bb3",
+      "displayName": "fraud_monthly_trend",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  fraud_by_month\n",
+        "ORDER BY\n",
+        "  transaction_year,\n",
+        "  transaction_month"
+      ],
+      "columns": [
+        {
+          "displayName": "Month Label",
+          "expression": "CONCAT(CAST(`transaction_year` AS STRING), '-', LPAD(CAST(`transaction_month` AS STRING), 2, '0'))"
+        }
+      ],
+      "catalog": "fraud_analytics",
+      "schema": "gold"
+    },
+    {
+      "name": "7a5e8cff",
+      "displayName": "fraud_by_transaction_type",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  fraud_by_transaction_type"
+      ],
+      "catalog": "fraud_analytics",
+      "schema": "gold"
+    },
+    {
+      "name": "b3af8a42",
+      "displayName": "fraud_by_merchant",
+      "queryLines": [
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  fraud_by_merchant\n",
+        "ORDER BY\n",
+        "  fraud_count DESC\n",
+        "LIMIT 10"
+      ],
+      "columns": [
+        {
+          "displayName": "Merchant Label",
+          "expression": "CONCAT('Merchant ', CAST(`merchant_id` AS STRING))"
+        }
+      ],
+      "catalog": "fraud_analytics",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "ade25861",
+      "displayName": "Location",
+      "layout": [
+        {
+          "widget": {
+            "name": "bec60c58",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "910e11c0",
+                  "fields": [
+                    {
+                      "name": "location",
+                      "expression": "`location`"
+                    },
+                    {
+                      "name": "sum(fraud_count)",
+                      "expression": "SUM(`fraud_count`)"
+                    },
+                    {
+                      "name": "avg(fraud_rate_pct)",
+                      "expression": "AVG(`fraud_rate_pct`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showDescription": false,
+                "title": "Top 10 Cities by Fraud Rate",
+                "showTitle": true
+              },
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "location",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "sum(fraud_count)"
+                    },
+                    {
+                      "fieldName": "avg(fraud_rate_pct)"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ba5f9f30",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "11e04bb3",
+                  "fields": [
+                    {
+                      "name": "Month Label",
+                      "expression": "`Month Label`"
+                    },
+                    {
+                      "name": "sum(fraud_amount)",
+                      "expression": "SUM(`fraud_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Monthly Fraud Trend",
+                "showTitle": true
+              },
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Month Label",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(fraud_amount)",
+                  "displayName": "Fraud Amount",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "412558e0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "7a5e8cff",
+                  "fields": [
+                    {
+                      "name": "sum(fraud_count)",
+                      "expression": "SUM(`fraud_count`)"
+                    },
+                    {
+                      "name": "transaction_type",
+                      "expression": "`transaction_type`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Fraud Count by Transaction Type",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(fraud_count)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Fraud Count"
+                },
+                "color": {
+                  "fieldName": "transaction_type",
+                  "legend": {
+                    "position": "right"
+                  },
+                  "displayName": "Transaction Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 12,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a16c794d",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b3af8a42",
+                  "fields": [
+                    {
+                      "name": "Merchant Label",
+                      "expression": "`Merchant Label`"
+                    },
+                    {
+                      "name": "sum(fraud_rate_pct)",
+                      "expression": "SUM(`fraud_rate_pct`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Top 10 Merchants by Fraud Count",
+                "showTitle": true
+              },
+              "mark": {
+                "layout": "group"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Merchant Label",
+                  "displayName": "Merchant",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(fraud_rate_pct)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Merchant Label",
+                  "legend": {
+                    "hide": true
+                  },
+                  "displayName": "Merchant",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 18,
+            "width": 11,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "0399bf5f",
+      "displayName": "Global Filters",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
